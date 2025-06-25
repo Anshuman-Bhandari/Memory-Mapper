@@ -103,43 +103,64 @@ const OPR = (props) => {
     return { result, faults, index_arr };
   };
 
-  const rowResultMaker = (frame, seq) => {
-    const { result, index_arr } = oprResultMaker(frame, seq);
+  const rowResultMaker = (frames, pageSeq) => {
+  const { result, index_arr } = oprResultMaker(frames, pageSeq);
 
-    return (
-      <>
-        {result.map((item, index) => {
-          const lastEle = item[item.length - 1];
+  const reversedResult = [...result].reverse();
+  const reversedIndexArr = [...index_arr].reverse();
 
-          return (
-            <tr key={index}>
-              {item.map((i, ind) => {
-                const isResultCol = ind === item.length - 1;
-                const isFrameUpdate = ind === index_arr[index] + 1;
+  return (
+    <>
+      {reversedResult.map((item, rowIndex) => {
+        const lastEle = item[item.length - 1];
 
-                let className = "border border-white text-center p-2";
-                if (isResultCol) {
-                  className += lastEle === "HIT" ? " bg-[#7C99AC] text-black border-black" : " bg-[#FFCDDD] text-black border-black";
+        return (
+          <tr
+            key={rowIndex}
+            className="transition-transform duration-500 ease-out animate-fadeInUp"
+            style={{
+              animationDelay: `${rowIndex * 0.2}s`,
+              animationFillMode: "both",
+            }}
+          >
+            {item.map((cell, cellIndex) => {
+              const isResultCol = cellIndex === item.length - 1;
+              const isCurrentFrame = cellIndex === reversedIndexArr[rowIndex] + 1;
+
+              let bgColor = "";
+              let textColor = "text-white";
+              let borderColor = "border border-white";
+              let hoverEffect = "";
+
+              if (isCurrentFrame) {
+                if (lastEle === "HIT") {
+                  bgColor = "bg-green-500/80";
+                  hoverEffect = "hover:bg-green-400 hover:scale-105";
+                } else {
+                  bgColor = "bg-red-600";
                 }
+              } else if (isResultCol) {
+                bgColor = lastEle === "HIT" ? "bg-[#7C99AC]" : "bg-[#FFCDDD]";
+                textColor = "text-black";
+                borderColor = "border border-black";
+              }
 
-                if (isFrameUpdate && !isResultCol) {
-                  className = `border border-white text-center p-2 ${
-                    lastEle === "HIT" ? "bg-lime-400" : "bg-[#fa2c2c]"
-                  }`;
-                }
+              return (
+                <td
+                  key={cellIndex}
+                  className={`p-2 text-center font-medium transition duration-300 ease-in-out ${bgColor} ${textColor} ${borderColor} ${hoverEffect}`}
+                >
+                  {cell}
+                </td>
+              );
+            })}
+          </tr>
+        );
+      })}
+    </>
+  );
+};
 
-                return (
-                  <td key={ind} className={className}>
-                    {i}
-                  </td>
-                );
-              })}
-            </tr>
-          );
-        })}
-      </>
-    );
-  };
 
   const { faults } = oprResultMaker(frames, pageSeq);
   const pageHits = pageSeq.length - faults;

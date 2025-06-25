@@ -72,7 +72,7 @@ const PageReplcement = () => {
 
         <div className="space-y-6">
           <div>
-            <label className="block text-lg mb-2">Enter Number of Frames</label>
+            <label className="block text-lg mb-2">Enter Number of Frames (2, 4, 8)</label>
             <input
               type="number"
               className="w-full px-4 py-2 text-black rounded-lg"

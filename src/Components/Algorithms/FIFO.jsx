@@ -65,41 +65,62 @@ const FIFO = (props) => {
   };
 
   const rowResultMaker = (frames, pageSeq) => {
-    const { result, index_arr } = fifoResultGiver(frames, pageSeq);
+  const { result, index_arr } = fifoResultGiver(frames, pageSeq);
 
-    return (
-      <>
-        {result.map((item, index) => {
-          const lastEle = item[item.length - 1];
+  return (
+    <>
+      {[...result].reverse().map((item, rowIndex) => {
+        const originalIndex = result.length - 1 - rowIndex;
+        const lastEle = item[item.length - 1];
 
-          return (
-            <tr key={index}>
-              {item.map((i, ind) => {
-                const isResultCol = ind === item.length - 1;
-                const isCurrentFrame = ind === index_arr[index] + 1;
-                const bgColor =
-                  isCurrentFrame && lastEle === "HIT"
-                    ? "bg-lime-400"
-                    : isCurrentFrame && lastEle === "FAULT"
-                    ? "bg-red-500"
-                    : isResultCol
-                    ? lastEle === "HIT"
-                      ? "bg-[#7C99AC] text-black border border-black"
-                      : "bg-[#FFCDDD] text-black border border-black"
-                    : "border border-white";
+        return (
+          <tr
+            key={rowIndex}
+            className="transition-transform duration-500 ease-out animate-fadeInUp"
+            style={{
+              animationDelay: `${rowIndex * 0.2}s`,
+              animationFillMode: "both",
+            }}
+          >
+            {item.map((cell, cellIndex) => {
+              const isResultCol = cellIndex === item.length - 1;
+              const isCurrentFrame = cellIndex === index_arr[originalIndex] + 1;
 
-                return (
-                  <td key={ind} className={`p-2 text-center ${bgColor}`}>
-                    {i}
-                  </td>
-                );
-              })}
-            </tr>
-          );
-        })}
-      </>
-    );
-  };
+              let bgColor = "";
+              let textColor = "text-white";
+              let borderColor = "border border-white";
+              let hoverEffect = "";
+
+              if (isCurrentFrame) {
+                if (lastEle === "HIT") {
+                  bgColor = "bg-green-500/80";
+                  hoverEffect = "hover:bg-green-400 hover:scale-105";
+                } else {
+                  bgColor = "bg-red-600";
+                }
+              } else if (isResultCol) {
+                bgColor = lastEle === "HIT" ? "bg-[#7C99AC]" : "bg-[#FFCDDD]";
+                textColor = "text-black";
+                borderColor = "border border-black";
+              }
+
+              return (
+                <td
+                  key={cellIndex}
+                  className={`p-2 text-center font-medium transition duration-300 ease-in-out ${bgColor} ${textColor} ${borderColor} ${hoverEffect}`}
+                >
+                  {cell}
+                </td>
+              );
+            })}
+          </tr>
+        );
+      })}
+    </>
+  );
+};
+
+
 
   const { pageFaults } = fifoResultGiver(frames, pageSeq);
   const pageHits = pageSeq.length - pageFaults;

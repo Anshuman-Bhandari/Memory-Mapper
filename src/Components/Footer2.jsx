@@ -12,8 +12,8 @@ const Footer2 = () => {
             <div className='bg-red-500 p-1'>
               <div className='flex justify-between m-10 text-xl font-light'>
                 <a className='hover:scale-110 duration-300' href="https://anshuman-bhandari.github.io/Personal-Portfolio/"><p>Anshuman Bhandari</p></a>
-                <a className='hover:scale-110 duration-300' href=""><p>Ashish Chaudhary</p></a>
-                <a className='hover:scale-110 duration-300' href=""><p>Aditya Sharma</p></a>
+                <a className='hover:scale-110 duration-300' href="https://www.linkedin.com/in/ashish-chaudhary-226b7824b/"><p>Ashish Chaudhary</p></a>
+                <a className='hover:scale-110 duration-300' href="https://www.linkedin.com/in/aditya-sharma8791/"><p>Aditya Sharma</p></a>
                 <a className='hover:scale-110 duration-300' href=""><p>Lalit Mohan Singh</p></a>
               </div>
             </div>

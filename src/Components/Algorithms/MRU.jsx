@@ -81,51 +81,65 @@ const MRU = (props) => {
     return { result, faults, index_arr };
   };
 
-  const rowResultMaker = (frame, seq) => {
-    const { result, index_arr } = mruResultMaker(frame, seq);
+  const rowResultMaker = (frames, pageSeq) => {
+  const { result, index_arr } = mruResultMaker(frames, pageSeq);
 
-    return (
-      <>
-        {result.map((item, index) => {
-          const lastEle = item[item.length - 1];
-          return (
-            <tr key={index} className={index % 2 === 0 ? '' : 'bg-[#273c3c]'}>
-              {item.map((i, ind) => {
-                const baseClass = "border text-center px-4 py-2";
-                if (ind !== index_arr[index] + 1) {
-                  return (
-                    <td
-                      key={ind}
-                      className={`${baseClass} ${
-                        ind !== item.length - 1
-                          ? "border-white"
-                          : lastEle === "HIT"
-                          ? "bg-[#7C99AC] text-black border-black"
-                          : "bg-[#FFCDDD] text-black border-black"
-                      }`}
-                    >
-                      {i}
-                    </td>
-                  );
+  const reversedResult = [...result].reverse();
+  const reversedIndexArr = [...index_arr].reverse();
+
+  return (
+    <>
+      {reversedResult.map((item, rowIndex) => {
+        const originalIndex = result.length - 1 - rowIndex;
+        const lastEle = item[item.length - 1];
+
+        return (
+          <tr
+            key={rowIndex}
+            className="transition-transform duration-500 ease-out animate-fadeInUp"
+            style={{
+              animationDelay: `${rowIndex * 0.2}s`,
+              animationFillMode: "both",
+            }}
+          >
+            {item.map((cell, cellIndex) => {
+              const isResultCol = cellIndex === item.length - 1;
+              const isCurrentFrame = cellIndex === reversedIndexArr[rowIndex] + 1;
+
+              let bgColor = "";
+              let textColor = "text-white";
+              let borderColor = "border border-white";
+              let hoverEffect = "";
+
+              if (isCurrentFrame) {
+                if (lastEle === "HIT") {
+                  bgColor = "bg-green-500/80";
+                  hoverEffect = "hover:bg-green-400 hover:scale-105";
                 } else {
-                  return (
-                    <td
-                      key={ind}
-                      className={`${baseClass} ${
-                        lastEle === "HIT" ? "bg-lime-400/80" : "bg-[#fa2c2c]"
-                      }`}
-                    >
-                      {i}
-                    </td>
-                  );
+                  bgColor = "bg-red-600";
                 }
-              })}
-            </tr>
-          );
-        })}
-      </>
-    );
-  };
+              } else if (isResultCol) {
+                bgColor = lastEle === "HIT" ? "bg-[#7C99AC]" : "bg-[#FFCDDD]";
+                textColor = "text-black";
+                borderColor = "border border-black";
+              }
+
+              return (
+                <td
+                  key={cellIndex}
+                  className={`p-2 text-center font-medium transition duration-300 ease-in-out ${bgColor} ${textColor} ${borderColor} ${hoverEffect}`}
+                >
+                  {cell}
+                </td>
+              );
+            })}
+          </tr>
+        );
+      })}
+    </>
+  );
+};
+
 
   const { faults } = mruResultMaker(frames, pageSeq);
   const pageHits = pageSeq.length - faults;

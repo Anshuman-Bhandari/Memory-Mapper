@@ -39,66 +39,71 @@ const LRU = (props) => {
   };
 
   const lruResultMaker = (frame, seq) => {
-    let temp = [];
-    let counter = 0;
-    let faults = 0;
-    let result = [];
-    let frame_arr = Array(frame).fill(-1);
-    let index_arr = [];
+  let temp = [];
+  let counter = 0;
+  let faults = 0;
+  let result = [];
+  let frame_arr = Array(frame).fill(-1);
+  let index_arr = [];
 
-    for (let i = 0; i < seq.length; i++) {
-      let flag1 = 0;
-      let flag2 = 0;
-      let hit = false;
-      let fault = false;
+  for (let i = 0; i < seq.length; i++) {
+    let flag1 = 0;
+    let flag2 = 0;
+    let hit = false;
+    let fault = false;
 
+    for (let j = 0; j < frame; j++) {
+      if (seq[i] === frame_arr[j]) {
+        counter++;
+        temp[j] = counter;
+        index_arr.push(j);
+        flag1 = 1;
+        flag2 = 1;
+        hit = true;
+        break;
+      }
+    }
+
+    if (flag1 === 0) {
       for (let j = 0; j < frame; j++) {
-        if (seq[i] === frame_arr[j]) {
+        if (frame_arr[j] === -1) {
+          faults++;
+          frame_arr[j] = seq[i];
+          index_arr.push(j);
           counter++;
           temp[j] = counter;
-          index_arr.push(j);
-          flag1 = 1;
           flag2 = 1;
-          hit = true;
+          fault = true;
           break;
         }
       }
-
-      if (flag1 === 0) {
-        for (let j = 0; j < frame; j++) {
-          if (frame_arr[j] === -1) {
-            faults++;
-            frame_arr[j] = seq[i];
-            index_arr.push(j);
-            counter++;
-            temp[j] = counter;
-            flag2 = 1;
-            fault = true;
-            break;
-          }
-        }
-      }
-
-      if (flag2 === 0) {
-        let pos = findLru(temp, frame);
-        faults++;
-        counter++;
-        temp[pos] = counter;
-        frame_arr[pos] = seq[i];
-        index_arr.push(pos);
-        fault = true;
-      }
-
-      let elements = [];
-      elements.push(`P${i + 1}   (${seq[i]})`);
-      for (let j = 0; j < frame; j++) elements.push(frame_arr[j]);
-
-      elements.push(hit ? "HIT" : "FAULT");
-      result.push(elements);
     }
 
-    return { result, faults, index_arr };
+    if (flag2 === 0) {
+      let pos = findLru(temp, frame);
+      faults++;
+      counter++;
+      temp[pos] = counter;
+      frame_arr[pos] = seq[i];
+      index_arr.push(pos);
+      fault = true;
+    }
+
+    let elements = [];
+    elements.push(`P${i + 1}   (${seq[i]})`);
+    for (let j = 0; j < frame; j++) elements.push(frame_arr[j]);
+    elements.push(hit ? "HIT" : "FAULT");
+    result.push(elements);
+  }
+
+  // ✅ Reverse both arrays before returning
+  return {
+    result: result.reverse(),
+    faults,
+    index_arr: index_arr.reverse(),
   };
+};
+
 
   const { result, faults, index_arr } = lruResultMaker(frames, pageSeq);
   const pageHits = pageSeq.length - faults;

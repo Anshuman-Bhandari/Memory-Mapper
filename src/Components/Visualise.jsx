@@ -78,7 +78,7 @@ function Visualise() {
               } h-[90%] w-[90%] rounded-xl  ease-in-out duration-150 gap-5 flex flex-col items-center justify-center`}
             >
               <img src={fixed} alt="" className="h-[50%]" />
-              <p className=" text-3xl font-medium text-black">Fixed</p>
+              <p className=" text-3xl font-medium text-black">1 Block 1 Process</p>
             </div>
           </div>
           <div className="w-1/2 h-full flex items-center justify-center">
@@ -94,7 +94,7 @@ function Visualise() {
               } h-[90%] w-[90%] rounded-xl  ease-in-out duration-150 gap-5 flex flex-col items-center justify-center`}
             >
               <img src={dynamic} alt="" className="h-[50%]" />
-              <p className=" text-3xl font-medium text-black">Dynamic</p>
+              <p className=" text-3xl font-medium text-black">1 Block N Process</p>
             </div>
           </div>
         </div>
